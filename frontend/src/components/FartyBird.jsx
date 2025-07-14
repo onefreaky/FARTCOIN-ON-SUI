@@ -20,8 +20,8 @@ const FartyBird = () => {
       width: 40,
       height: 40,
       velocity: 0,
-      gravity: 0.5,
-      jumpStrength: -10,
+      gravity: 0.3,
+      jumpStrength: -6,
       rotation: 0
     },
     obstacles: [],
