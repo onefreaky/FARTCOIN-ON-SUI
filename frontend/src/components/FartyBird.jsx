@@ -172,6 +172,7 @@ const FartyBird = () => {
     const coins = gameObjects.current.coins;
     const powerUps = gameObjects.current.powerUps;
     const particles = gameObjects.current.particles;
+    const candles = gameObjects.current.candles;
 
     // Clear canvas
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -183,6 +184,9 @@ const FartyBird = () => {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+    // Current speed (normal or boosted)
+    const currentSpeed = speedBoost ? OBSTACLE_SPEED * 1.5 : OBSTACLE_SPEED;
+
     // Update bird physics
     bird.velocity += bird.gravity;
     bird.y += bird.velocity;
@@ -191,15 +195,15 @@ const FartyBird = () => {
     // Cap velocity to prevent too fast falling
     bird.velocity = Math.min(bird.velocity, 6);
 
-    // Check boundaries
-    if (bird.y > CANVAS_HEIGHT - bird.height || bird.y < 0) {
+    // Check boundaries (only if not invincible)
+    if (!isInvincible && (bird.y > CANVAS_HEIGHT - bird.height || bird.y < 0)) {
       setGameState('gameOver');
       return;
     }
 
     // Update obstacles
     obstacles.forEach((obstacle, index) => {
-      obstacle.x -= OBSTACLE_SPEED;
+      obstacle.x -= currentSpeed;
       
       // Check if bird passed obstacle
       if (!obstacle.passed && bird.x > obstacle.x + OBSTACLE_WIDTH) {
@@ -208,13 +212,15 @@ const FartyBird = () => {
         playFartSound();
       }
       
-      // Check collision with obstacles
-      const topObstacle = { x: obstacle.x, y: 0, width: OBSTACLE_WIDTH, height: obstacle.topHeight };
-      const bottomObstacle = { x: obstacle.x, y: obstacle.bottomY, width: OBSTACLE_WIDTH, height: obstacle.bottomHeight };
-      
-      if (checkCollision(bird, topObstacle) || checkCollision(bird, bottomObstacle)) {
-        setGameState('gameOver');
-        return;
+      // Check collision with obstacles (only if not invincible)
+      if (!isInvincible) {
+        const topObstacle = { x: obstacle.x, y: 0, width: OBSTACLE_WIDTH, height: obstacle.topHeight };
+        const bottomObstacle = { x: obstacle.x, y: obstacle.bottomY, width: OBSTACLE_WIDTH, height: obstacle.bottomHeight };
+        
+        if (checkCollision(bird, topObstacle) || checkCollision(bird, bottomObstacle)) {
+          setGameState('gameOver');
+          return;
+        }
       }
       
       // Remove off-screen obstacles
@@ -225,12 +231,17 @@ const FartyBird = () => {
 
     // Update coins
     coins.forEach((coin, index) => {
-      coin.x -= OBSTACLE_SPEED;
+      coin.x -= currentSpeed;
       coin.rotation += 0.1;
       
       if (!coin.collected && checkCollision(bird, coin)) {
         coin.collected = true;
-        setScore(prev => prev + (coin.type === 'fart' ? 5 : 10));
+        let points = 5;
+        if (coin.type === 'sui') points = 10;
+        else if (coin.type === 'diamond') points = 15;
+        else if (coin.type === 'rocket') points = 20;
+        
+        setScore(prev => prev + points);
         playCoinSound();
         coins.splice(index, 1);
       }
@@ -242,13 +253,23 @@ const FartyBird = () => {
 
     // Update power-ups
     powerUps.forEach((powerUp, index) => {
-      powerUp.x -= OBSTACLE_SPEED;
+      powerUp.x -= currentSpeed;
       powerUp.rotation += 0.05;
       powerUp.pulse += 0.1;
       
       if (!powerUp.collected && checkCollision(bird, powerUp)) {
         powerUp.collected = true;
-        setPowerUps(prev => [...prev, { type: powerUp.type, duration: 300 }]);
+        
+        if (powerUp.type === 'speed') {
+          setPowerUps(prev => [...prev, { type: 'speed', duration: 300 }]);
+          setSpeedBoost(true);
+        } else if (powerUp.type === 'invincibility') {
+          setPowerUps(prev => [...prev, { type: 'invincibility', duration: 300 }]);
+          setIsInvincible(true);
+        } else {
+          setPowerUps(prev => [...prev, { type: powerUp.type, duration: 300 }]);
+        }
+        
         setScore(prev => prev + 20);
         playCoinSound();
         powerUps.splice(index, 1);
@@ -259,21 +280,43 @@ const FartyBird = () => {
       }
     });
 
+    // Update candles
+    candles.forEach((candle, index) => {
+      candle.x -= currentSpeed;
+      
+      if (candle.x + candle.width < 0) {
+        candles.splice(index, 1);
+      }
+    });
+
     // Generate new obstacles
     if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < CANVAS_WIDTH - 300) {
       obstacles.push(generateObstacle(CANVAS_WIDTH));
       
-      // Sometimes add coins or power-ups
-      if (Math.random() > 0.7) {
+      // Add more coins and power-ups
+      if (Math.random() > 0.5) {
         const coinX = CANVAS_WIDTH + 150;
         const coinY = Math.random() * (CANVAS_HEIGHT - 100) + 50;
         coins.push(generateCoin(coinX, coinY));
       }
       
-      if (Math.random() > 0.85) {
-        const powerUpX = CANVAS_WIDTH + 200;
+      if (Math.random() > 0.6) {
+        const coin2X = CANVAS_WIDTH + 200;
+        const coin2Y = Math.random() * (CANVAS_HEIGHT - 100) + 50;
+        coins.push(generateCoin(coin2X, coin2Y));
+      }
+      
+      if (Math.random() > 0.75) {
+        const powerUpX = CANVAS_WIDTH + 180;
         const powerUpY = Math.random() * (CANVAS_HEIGHT - 100) + 50;
         powerUps.push(generatePowerUp(powerUpX, powerUpY));
+      }
+      
+      // Add candles
+      for (let i = 0; i < 3; i++) {
+        const candleX = CANVAS_WIDTH + 100 + (i * 20);
+        const candleY = Math.random() * (CANVAS_HEIGHT - 100) + 50;
+        candles.push(generateCandle(candleX, candleY));
       }
     }
 
@@ -296,24 +339,47 @@ const FartyBird = () => {
       ctx.stroke();
     });
 
+    // Draw candles
+    candles.forEach(candle => {
+      ctx.fillStyle = candle.isGreen ? '#10b981' : '#ef4444';
+      
+      // Draw wick
+      ctx.fillRect(candle.x + candle.width/2 - 1, candle.y - candle.wickTop, 2, candle.wickTop);
+      ctx.fillRect(candle.x + candle.width/2 - 1, candle.y + candle.height, 2, candle.wickBottom);
+      
+      // Draw candle body
+      ctx.fillRect(candle.x, candle.y, candle.width, candle.height);
+    });
+
     // Draw coins
     coins.forEach(coin => {
       ctx.save();
       ctx.translate(coin.x + coin.width/2, coin.y + coin.height/2);
       ctx.rotate(coin.rotation);
       
+      let emoji, color;
       if (coin.type === 'fart') {
-        ctx.fillStyle = '#3b82f6';
-        ctx.fillRect(-coin.width/2, -coin.height/2, coin.width, coin.height);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px Arial';
-        ctx.fillText('💨', -6, 4);
+        emoji = '💨';
+        color = '#3b82f6';
+      } else if (coin.type === 'sui') {
+        emoji = 'SUI';
+        color = '#06b6d4';
+      } else if (coin.type === 'diamond') {
+        emoji = '💎';
+        color = '#8b5cf6';
+      } else if (coin.type === 'rocket') {
+        emoji = '🚀';
+        color = '#f59e0b';
+      }
+      
+      ctx.fillStyle = color;
+      ctx.fillRect(-coin.width/2, -coin.height/2, coin.width, coin.height);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '12px Arial';
+      if (coin.type === 'sui') {
+        ctx.fillText(emoji, -10, 4);
       } else {
-        ctx.fillStyle = '#06b6d4';
-        ctx.fillRect(-coin.width/2, -coin.height/2, coin.width, coin.height);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px Arial';
-        ctx.fillText('SUI', -10, 4);
+        ctx.fillText(emoji, -6, 4);
       }
       
       ctx.restore();
@@ -326,26 +392,49 @@ const FartyBird = () => {
       ctx.rotate(powerUp.rotation);
       
       const pulseSize = Math.sin(powerUp.pulse) * 3;
-      ctx.fillStyle = '#f59e0b';
+      
+      let color, emoji;
+      if (powerUp.type === 'speed') {
+        color = '#10b981';
+        emoji = '⚡';
+      } else if (powerUp.type === 'invincibility') {
+        color = '#8b5cf6';
+        emoji = '🛡️';
+      } else if (powerUp.type === 'bullish') {
+        color = '#f59e0b';
+        emoji = '🚀';
+      } else if (powerUp.type === 'moon') {
+        color = '#f59e0b';
+        emoji = '🌙';
+      } else {
+        color = '#f59e0b';
+        emoji = '💎';
+      }
+      
+      ctx.fillStyle = color;
       ctx.fillRect(-powerUp.width/2 - pulseSize, -powerUp.height/2 - pulseSize, 
                    powerUp.width + pulseSize * 2, powerUp.height + pulseSize * 2);
       
       ctx.fillStyle = '#ffffff';
       ctx.font = '14px Arial';
-      const emoji = powerUp.type === 'bullish' ? '🚀' : 
-                   powerUp.type === 'moon' ? '🌙' : '💎';
       ctx.fillText(emoji, -7, 5);
       
       ctx.restore();
     });
 
-    // Draw bird
+    // Draw bird (with invincibility effect)
     ctx.save();
     ctx.translate(bird.x + bird.width/2, bird.y + bird.height/2);
     ctx.rotate(bird.rotation * Math.PI / 180);
     
+    // Invincibility effect
+    if (isInvincible) {
+      ctx.shadowColor = '#8b5cf6';
+      ctx.shadowBlur = 20;
+    }
+    
     // Bird body
-    ctx.fillStyle = '#8b5cf6';
+    ctx.fillStyle = isInvincible ? '#8b5cf6' : '#8b5cf6';
     ctx.fillRect(-bird.width/2, -bird.height/2, bird.width, bird.height);
     
     // Bird face
@@ -354,11 +443,11 @@ const FartyBird = () => {
     ctx.fillStyle = '#000000';
     ctx.fillRect(-bird.width/2 + 7, -bird.height/2 + 7, 6, 6);
     
-    // Fart trail
-    ctx.fillStyle = '#fbbf24';
-    ctx.fillRect(-bird.width/2 - 15, -5, 10, 10);
-    ctx.fillStyle = '#f59e0b';
-    ctx.fillRect(-bird.width/2 - 25, -3, 8, 6);
+    // Fart trail (enhanced if speed boost)
+    ctx.fillStyle = speedBoost ? '#ff6b35' : '#fbbf24';
+    ctx.fillRect(-bird.width/2 - 15, -5, speedBoost ? 15 : 10, speedBoost ? 15 : 10);
+    ctx.fillStyle = speedBoost ? '#ff8500' : '#f59e0b';
+    ctx.fillRect(-bird.width/2 - 25, -3, speedBoost ? 12 : 8, speedBoost ? 9 : 6);
     
     ctx.restore();
 
@@ -368,15 +457,20 @@ const FartyBird = () => {
     ctx.fillText(`Score: ${score}`, 20, 40);
 
     // Draw active power-ups
-    powerUps.forEach((powerUp, index) => {
+    let yOffset = 70;
+    powerUps.forEach((powerUp) => {
+      let displayName = powerUp.type.toUpperCase();
+      if (powerUp.type === 'invincibility') displayName = 'INVINCIBLE';
+      if (powerUp.type === 'speed') displayName = 'SPEED BOOST';
+      
       ctx.fillStyle = '#f59e0b';
       ctx.font = '16px Arial';
-      ctx.fillText(`${powerUp.type.toUpperCase()} (${Math.ceil(powerUp.duration / 60)}s)`, 
-                   20, 70 + (index * 25));
+      ctx.fillText(`${displayName} (${Math.ceil(powerUp.duration / 60)}s)`, 20, yOffset);
+      yOffset += 25;
     });
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
-  }, [gameState, score, powerUps]);
+  }, [gameState, score, powerUps, isInvincible, speedBoost]);
 
   // Handle input
   const handleJump = useCallback(() => {
