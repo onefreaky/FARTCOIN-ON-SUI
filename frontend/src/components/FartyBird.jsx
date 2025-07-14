@@ -29,7 +29,8 @@ const FartyBird = () => {
     obstacles: [],
     coins: [],
     powerUps: [],
-    particles: []
+    particles: [],
+    candles: []
   });
 
   // Game settings
