@@ -323,29 +323,22 @@ const FartyBird = () => {
       obstacles.push(generateObstacle(CANVAS_WIDTH));
       
       // Add more coins and power-ups
-      if (Math.random() > 0.5) {
-        const coinX = CANVAS_WIDTH + 150;
-        const coinY = Math.random() * (CANVAS_HEIGHT - 100) + 50;
+      if (Math.random() > 0.4) {
+        const coinX = CANVAS_WIDTH + 120 + Math.random() * 80;
+        const coinY = Math.random() * (CANVAS_HEIGHT - 150) + 75;
         coins.push(generateCoin(coinX, coinY));
       }
       
-      if (Math.random() > 0.6) {
-        const coin2X = CANVAS_WIDTH + 200;
-        const coin2Y = Math.random() * (CANVAS_HEIGHT - 100) + 50;
+      if (Math.random() > 0.5) {
+        const coin2X = CANVAS_WIDTH + 150 + Math.random() * 100;
+        const coin2Y = Math.random() * (CANVAS_HEIGHT - 150) + 75;
         coins.push(generateCoin(coin2X, coin2Y));
       }
       
-      if (Math.random() > 0.75) {
-        const powerUpX = CANVAS_WIDTH + 180;
-        const powerUpY = Math.random() * (CANVAS_HEIGHT - 100) + 50;
+      if (Math.random() > 0.7) {
+        const powerUpX = CANVAS_WIDTH + 180 + Math.random() * 60;
+        const powerUpY = Math.random() * (CANVAS_HEIGHT - 150) + 75;
         powerUps.push(generatePowerUp(powerUpX, powerUpY));
-      }
-      
-      // Add candles
-      for (let i = 0; i < 3; i++) {
-        const candleX = CANVAS_WIDTH + 100 + (i * 20);
-        const candleY = Math.random() * (CANVAS_HEIGHT - 100) + 50;
-        candles.push(generateCandle(candleX, candleY));
       }
     }
 
