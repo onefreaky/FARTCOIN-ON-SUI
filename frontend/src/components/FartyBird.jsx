@@ -116,13 +116,25 @@ const FartyBird = () => {
   // Generate coins
   const generateCoin = (x, y) => {
     const types = ['fart', 'sui', 'diamond', 'rocket'];
+    const weights = [0.4, 0.3, 0.2, 0.1]; // Weighted probability
+    let random = Math.random();
+    let selectedType = types[0];
+    
+    for (let i = 0; i < weights.length; i++) {
+      if (random < weights[i]) {
+        selectedType = types[i];
+        break;
+      }
+      random -= weights[i];
+    }
+    
     return {
       x,
       y,
       width: 25,
       height: 25,
       collected: false,
-      type: types[Math.floor(Math.random() * types.length)],
+      type: selectedType,
       rotation: 0,
       sparkles: []
     };
@@ -131,12 +143,24 @@ const FartyBird = () => {
   // Generate power-ups
   const generatePowerUp = (x, y) => {
     const types = ['bullish', 'moon', 'diamond', 'speed', 'invincibility'];
+    const weights = [0.2, 0.2, 0.2, 0.2, 0.2]; // Equal probability
+    let random = Math.random();
+    let selectedType = types[0];
+    
+    for (let i = 0; i < weights.length; i++) {
+      if (random < weights[i]) {
+        selectedType = types[i];
+        break;
+      }
+      random -= weights[i];
+    }
+    
     return {
       x,
       y,
       width: 30,
       height: 30,
-      type: types[Math.floor(Math.random() * types.length)],
+      type: selectedType,
       collected: false,
       rotation: 0,
       pulse: 0
