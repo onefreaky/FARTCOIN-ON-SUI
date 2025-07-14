@@ -483,9 +483,11 @@ const FartyBird = () => {
   // Start game
   const startGame = () => {
     setGameState('countdown');
-    setCountdown(5);
+    setCountdown(3);
     setScore(0);
     setPowerUps([]);
+    setIsInvincible(false);
+    setSpeedBoost(false);
     
     // Reset game objects
     gameObjects.current = {
@@ -502,7 +504,8 @@ const FartyBird = () => {
       obstacles: [],
       coins: [],
       powerUps: [],
-      particles: []
+      particles: [],
+      candles: []
     };
   };
 
