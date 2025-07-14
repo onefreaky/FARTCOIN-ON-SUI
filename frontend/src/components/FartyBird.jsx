@@ -10,7 +10,9 @@ const FartyBird = () => {
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(parseInt(localStorage.getItem('fartyBirdBest') || '0'));
   const [powerUps, setPowerUps] = useState([]);
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(3);
+  const [isInvincible, setIsInvincible] = useState(false);
+  const [speedBoost, setSpeedBoost] = useState(false);
   
   // Game objects
   const gameObjects = useRef({
