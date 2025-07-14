@@ -734,9 +734,9 @@ const FartyBird = () => {
 
       <div className="text-center text-cyan-300 max-w-md">
         <p className="text-sm">
-          🎯 Collect blue fart coins (5 pts) and SUI coins (10 pts)<br/>
-          🚀 Grab power-ups for bullish bonuses (20 pts)<br/>
-          💨 Every fart propels you through the price charts!
+          💨 <strong>Fart Coins:</strong> 5 pts | 🔹 <strong>SUI Coins:</strong> 10 pts | 💎 <strong>Diamond:</strong> 15 pts | 🚀 <strong>Rocket:</strong> 20 pts<br/>
+          ⚡ <strong>Speed Boost:</strong> Go faster! | 🛡️ <strong>Invincibility:</strong> 5 seconds safe!<br/>
+          🚀 <strong>Bullish Power-ups:</strong> 20 pts each | 📈 <strong>Navigate green & red candles!</strong>
         </p>
       </div>
     </div>
