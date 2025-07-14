@@ -369,7 +369,8 @@ const FartyBird = () => {
 
   // Start game
   const startGame = () => {
-    setGameState('playing');
+    setGameState('countdown');
+    setCountdown(5);
     setScore(0);
     setPowerUps([]);
     
@@ -381,8 +382,8 @@ const FartyBird = () => {
         width: 40,
         height: 40,
         velocity: 0,
-        gravity: 0.5,
-        jumpStrength: -10,
+        gravity: 0.3,
+        jumpStrength: -6,
         rotation: 0
       },
       obstacles: [],
@@ -390,6 +391,44 @@ const FartyBird = () => {
       powerUps: [],
       particles: []
     };
+  };
+
+  // Countdown effect
+  useEffect(() => {
+    let timer;
+    if (gameState === 'countdown' && countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(prev => prev - 1);
+        playBigFartSound();
+      }, 1000);
+    } else if (gameState === 'countdown' && countdown === 0) {
+      setGameState('playing');
+    }
+    return () => clearTimeout(timer);
+  }, [gameState, countdown]);
+
+  // Share score functionality
+  const shareScore = (platform) => {
+    const text = `🎮 I just scored ${score} points in Farty Bird! 💨 SUI-powered blockchain gaming promoting Fartcoin On Sui! 🚀 Can you beat my score?`;
+    const url = window.location.href;
+    
+    switch(platform) {
+      case 'twitter':
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'instagram':
+        // Instagram doesn't have direct sharing via URL, so we copy to clipboard
+        navigator.clipboard.writeText(`${text} ${url}`);
+        alert('Score copied to clipboard! Share it on Instagram! 📱');
+        break;
+      case 'tiktok':
+        // TikTok doesn't have direct sharing via URL, so we copy to clipboard
+        navigator.clipboard.writeText(`${text} ${url}`);
+        alert('Score copied to clipboard! Share it on TikTok! 🎵');
+        break;
+      default:
+        break;
+    }
   };
 
   // Game over
