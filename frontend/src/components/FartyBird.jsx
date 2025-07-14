@@ -539,13 +539,53 @@ const FartyBird = () => {
           </div>
         )}
         
+        {gameState === 'countdown' && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-90 rounded-lg">
+            <div className="text-center text-white">
+              <h2 className="text-6xl font-bold mb-8 text-yellow-400">GET READY!</h2>
+              <div className="text-9xl font-bold text-orange-500 mb-4 animate-pulse">
+                {countdown}
+              </div>
+              <p className="text-2xl text-cyan-300">💨 FART COUNTDOWN! 💨</p>
+              <p className="text-lg text-blue-300 mt-4">
+                Navigate the SUI charts & collect coins!
+              </p>
+            </div>
+          </div>
+        )}
+        
         {gameState === 'gameOver' && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded-lg">
             <div className="text-center text-white mb-8">
               <h2 className="text-4xl font-bold mb-4">💥 GAME OVER! 💥</h2>
               <p className="text-2xl mb-2">Final Score: {score}</p>
               <p className="text-xl mb-4">Best Score: {bestScore}</p>
-              <p className="text-lg text-cyan-300">Keep promoting Fartcoin On Sui! 🚀</p>
+              <p className="text-lg text-cyan-300 mb-6">Keep promoting Fartcoin On Sui! 🚀</p>
+              
+              {/* Share Score Buttons */}
+              <div className="flex flex-col gap-3 mb-6">
+                <p className="text-md text-yellow-300">Share your score!</p>
+                <div className="flex gap-3 justify-center">
+                  <Button 
+                    onClick={() => shareScore('twitter')}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 text-sm"
+                  >
+                    Share on 𝕏 (Twitter)
+                  </Button>
+                  <Button 
+                    onClick={() => shareScore('instagram')}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 text-sm"
+                  >
+                    Share on Instagram
+                  </Button>
+                  <Button 
+                    onClick={() => shareScore('tiktok')}
+                    className="bg-black hover:bg-gray-800 text-white px-4 py-2 text-sm"
+                  >
+                    Share on TikTok
+                  </Button>
+                </div>
+              </div>
             </div>
             <Button 
               onClick={startGame}
