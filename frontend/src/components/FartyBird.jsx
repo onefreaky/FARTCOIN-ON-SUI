@@ -98,12 +98,17 @@ const FartyBird = () => {
   // Generate obstacles (price chart style)
   const generateObstacle = (x) => {
     const gapY = Math.random() * (CANVAS_HEIGHT - OBSTACLE_GAP - 100) + 50;
+    const isCandle = Math.random() > 0.4; // 60% chance for candle obstacles
+    const isGreen = Math.random() > 0.5;
+    
     return {
       x,
       topHeight: gapY,
       bottomY: gapY + OBSTACLE_GAP,
       bottomHeight: CANVAS_HEIGHT - (gapY + OBSTACLE_GAP),
       passed: false,
+      isCandle,
+      isGreen,
       chartData: Array.from({ length: 20 }, () => Math.random() * 0.8 + 0.2)
     };
   };
