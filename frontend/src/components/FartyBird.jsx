@@ -422,36 +422,57 @@ const FartyBird = () => {
     //   ctx.fillRect(candle.x, candle.y, candle.width, candle.height);
     // });
 
-    // Draw coins
+    // Draw coins with better visual effects
     coins.forEach(coin => {
       ctx.save();
       ctx.translate(coin.x + coin.width/2, coin.y + coin.height/2);
       ctx.rotate(coin.rotation);
       
-      let emoji, color;
+      let emoji, color, shadowColor;
       if (coin.type === 'fart') {
         emoji = '💨';
         color = '#3b82f6';
+        shadowColor = '#1d4ed8';
       } else if (coin.type === 'sui') {
         emoji = 'SUI';
         color = '#06b6d4';
+        shadowColor = '#0891b2';
       } else if (coin.type === 'diamond') {
         emoji = '💎';
         color = '#8b5cf6';
+        shadowColor = '#7c3aed';
       } else if (coin.type === 'rocket') {
         emoji = '🚀';
         color = '#f59e0b';
+        shadowColor = '#d97706';
       }
       
+      // Add glow effect
+      ctx.shadowColor = shadowColor;
+      ctx.shadowBlur = 10;
+      
+      // Draw coin background
       ctx.fillStyle = color;
       ctx.fillRect(-coin.width/2, -coin.height/2, coin.width, coin.height);
+      
+      // Draw coin border
+      ctx.strokeStyle = shadowColor;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-coin.width/2, -coin.height/2, coin.width, coin.height);
+      
+      // Reset shadow
+      ctx.shadowBlur = 0;
+      
+      // Draw emoji/text
       ctx.fillStyle = '#ffffff';
-      ctx.font = '12px Arial';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'center';
       if (coin.type === 'sui') {
-        ctx.fillText(emoji, -10, 4);
+        ctx.fillText(emoji, 0, 4);
       } else {
-        ctx.fillText(emoji, -6, 4);
+        ctx.fillText(emoji, 0, 4);
       }
+      ctx.textAlign = 'left';
       
       ctx.restore();
     });
