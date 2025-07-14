@@ -36,7 +36,7 @@ const FartyBird = () => {
   const CANVAS_WIDTH = 800;
   const CANVAS_HEIGHT = 500;
   const OBSTACLE_WIDTH = 60;
-  const OBSTACLE_GAP = 180;
+  const OBSTACLE_GAP = 200;
   const OBSTACLE_SPEED = 2;
 
   // Sound effects
