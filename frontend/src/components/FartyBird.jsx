@@ -607,15 +607,29 @@ const FartyBird = () => {
   useEffect(() => {
     if (powerUps.length > 0) {
       const interval = setInterval(() => {
-        setPowerUps(prev => 
-          prev.map(powerUp => ({ ...powerUp, duration: powerUp.duration - 1 }))
-             .filter(powerUp => powerUp.duration > 0)
-        );
+        setPowerUps(prev => {
+          const updated = prev.map(powerUp => ({ ...powerUp, duration: powerUp.duration - 1 }))
+                             .filter(powerUp => powerUp.duration > 0);
+          
+          // Check if speed boost ended
+          const hasSpeedBoost = updated.some(p => p.type === 'speed');
+          if (!hasSpeedBoost && speedBoost) {
+            setSpeedBoost(false);
+          }
+          
+          // Check if invincibility ended
+          const hasInvincibility = updated.some(p => p.type === 'invincibility');
+          if (!hasInvincibility && isInvincible) {
+            setIsInvincible(false);
+          }
+          
+          return updated;
+        });
       }, 16);
 
       return () => clearInterval(interval);
     }
-  }, [powerUps]);
+  }, [powerUps, speedBoost, isInvincible]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-4">
