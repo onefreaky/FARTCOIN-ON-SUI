@@ -894,11 +894,11 @@ const FartyBird = () => {
         <Badge className="bg-purple-600 text-white px-4 py-2">Best: {bestScore}</Badge>
       </div>
 
-      <div className="text-center text-cyan-300 max-w-md">
+      <div className="text-center text-cyan-300 max-w-lg">
         <p className="text-sm">
           💨 <strong>Fart Coins:</strong> 5 pts | 🔹 <strong>SUI Coins:</strong> 10 pts | 💎 <strong>Diamond:</strong> 15 pts | 🚀 <strong>Rocket:</strong> 20 pts<br/>
           ⚡ <strong>Speed Boost:</strong> Go faster! | 🛡️ <strong>Invincibility:</strong> 5 seconds safe!<br/>
-          🚀 <strong>Bullish Power-ups:</strong> 20 pts each | 📈 <strong>Navigate green & red candles!</strong>
+          🚀 <strong>Bullish Power-ups:</strong> 20 pts each | 📈 <strong>Navigate through green & red candle obstacles!</strong>
         </p>
       </div>
     </div>
