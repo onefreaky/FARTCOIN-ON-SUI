@@ -536,7 +536,7 @@ const FartyBird = () => {
       ctx.restore();
     });
 
-    // Draw bird (with invincibility effect)
+    // Draw enhanced bird with better effects
     ctx.save();
     ctx.translate(bird.x + bird.width/2, bird.y + bird.height/2);
     ctx.rotate(bird.rotation * Math.PI / 180);
@@ -544,24 +544,54 @@ const FartyBird = () => {
     // Invincibility effect
     if (isInvincible) {
       ctx.shadowColor = '#8b5cf6';
+      ctx.shadowBlur = 25;
+      // Pulsing effect
+      const pulse = Math.sin(Date.now() * 0.01) * 0.1 + 1;
+      ctx.scale(pulse, pulse);
+    }
+    
+    // Speed boost effect
+    if (speedBoost) {
+      ctx.shadowColor = '#ff6b35';
       ctx.shadowBlur = 20;
     }
     
     // Bird body
-    ctx.fillStyle = isInvincible ? '#8b5cf6' : '#8b5cf6';
+    ctx.fillStyle = isInvincible ? '#a855f7' : '#8b5cf6';
     ctx.fillRect(-bird.width/2, -bird.height/2, bird.width, bird.height);
+    
+    // Bird border
+    ctx.strokeStyle = isInvincible ? '#9333ea' : '#7c3aed';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-bird.width/2, -bird.height/2, bird.width, bird.height);
     
     // Bird face
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(-bird.width/2 + 5, -bird.height/2 + 5, 10, 10);
+    ctx.fillRect(-bird.width/2 + 5, -bird.height/2 + 5, 12, 12);
     ctx.fillStyle = '#000000';
-    ctx.fillRect(-bird.width/2 + 7, -bird.height/2 + 7, 6, 6);
+    ctx.fillRect(-bird.width/2 + 7, -bird.height/2 + 7, 8, 8);
     
-    // Fart trail (enhanced if speed boost)
-    ctx.fillStyle = speedBoost ? '#ff6b35' : '#fbbf24';
-    ctx.fillRect(-bird.width/2 - 15, -5, speedBoost ? 15 : 10, speedBoost ? 15 : 10);
-    ctx.fillStyle = speedBoost ? '#ff8500' : '#f59e0b';
-    ctx.fillRect(-bird.width/2 - 25, -3, speedBoost ? 12 : 8, speedBoost ? 9 : 6);
+    // Eye highlight
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(-bird.width/2 + 9, -bird.height/2 + 9, 2, 2);
+    
+    // Enhanced fart trail
+    const trailColor1 = speedBoost ? '#ff6b35' : '#fbbf24';
+    const trailColor2 = speedBoost ? '#ff8500' : '#f59e0b';
+    const trailSize = speedBoost ? 1.5 : 1;
+    
+    ctx.fillStyle = trailColor1;
+    ctx.fillRect(-bird.width/2 - 15 * trailSize, -5 * trailSize, 10 * trailSize, 10 * trailSize);
+    ctx.fillStyle = trailColor2;
+    ctx.fillRect(-bird.width/2 - 25 * trailSize, -3 * trailSize, 8 * trailSize, 6 * trailSize);
+    
+    // Additional trail particles if speed boost
+    if (speedBoost) {
+      ctx.fillStyle = '#ff4500';
+      ctx.fillRect(-bird.width/2 - 35, -2, 6, 4);
+      ctx.fillStyle = '#ff6347';
+      ctx.fillRect(-bird.width/2 - 40, -1, 4, 2);
+    }
     
     ctx.restore();
 
