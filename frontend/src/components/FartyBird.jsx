@@ -6,10 +6,11 @@ import { Badge } from './ui/badge';
 const FartyBird = () => {
   const canvasRef = useRef(null);
   const gameLoopRef = useRef(null);
-  const [gameState, setGameState] = useState('start'); // 'start', 'playing', 'gameOver'
+  const [gameState, setGameState] = useState('start'); // 'start', 'countdown', 'playing', 'gameOver'
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(parseInt(localStorage.getItem('fartyBirdBest') || '0'));
   const [powerUps, setPowerUps] = useState([]);
+  const [countdown, setCountdown] = useState(5);
   
   // Game objects
   const gameObjects = useRef({
