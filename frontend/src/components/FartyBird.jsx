@@ -167,7 +167,10 @@ const FartyBird = () => {
     // Update bird physics
     bird.velocity += bird.gravity;
     bird.y += bird.velocity;
-    bird.rotation = Math.min(bird.velocity * 3, 30);
+    bird.rotation = Math.min(bird.velocity * 2, 20);
+
+    // Cap velocity to prevent too fast falling
+    bird.velocity = Math.min(bird.velocity, 6);
 
     // Check boundaries
     if (bird.y > CANVAS_HEIGHT - bird.height || bird.y < 0) {
