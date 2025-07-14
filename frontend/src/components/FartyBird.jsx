@@ -477,39 +477,61 @@ const FartyBird = () => {
       ctx.restore();
     });
 
-    // Draw power-ups
+    // Draw power-ups with enhanced effects
     powerUps.forEach(powerUp => {
       ctx.save();
       ctx.translate(powerUp.x + powerUp.width/2, powerUp.y + powerUp.height/2);
       ctx.rotate(powerUp.rotation);
       
-      const pulseSize = Math.sin(powerUp.pulse) * 3;
+      const pulseSize = Math.sin(powerUp.pulse) * 4;
       
-      let color, emoji;
+      let color, emoji, shadowColor;
       if (powerUp.type === 'speed') {
         color = '#10b981';
         emoji = '⚡';
+        shadowColor = '#059669';
       } else if (powerUp.type === 'invincibility') {
         color = '#8b5cf6';
         emoji = '🛡️';
+        shadowColor = '#7c3aed';
       } else if (powerUp.type === 'bullish') {
         color = '#f59e0b';
         emoji = '🚀';
+        shadowColor = '#d97706';
       } else if (powerUp.type === 'moon') {
-        color = '#f59e0b';
+        color = '#fbbf24';
         emoji = '🌙';
+        shadowColor = '#f59e0b';
       } else {
-        color = '#f59e0b';
+        color = '#ec4899';
         emoji = '💎';
+        shadowColor = '#db2777';
       }
       
+      // Add glow effect
+      ctx.shadowColor = shadowColor;
+      ctx.shadowBlur = 15;
+      
+      // Draw power-up background
       ctx.fillStyle = color;
       ctx.fillRect(-powerUp.width/2 - pulseSize, -powerUp.height/2 - pulseSize, 
                    powerUp.width + pulseSize * 2, powerUp.height + pulseSize * 2);
       
+      // Draw power-up border
+      ctx.strokeStyle = shadowColor;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(-powerUp.width/2 - pulseSize, -powerUp.height/2 - pulseSize, 
+                     powerUp.width + pulseSize * 2, powerUp.height + pulseSize * 2);
+      
+      // Reset shadow
+      ctx.shadowBlur = 0;
+      
+      // Draw emoji
       ctx.fillStyle = '#ffffff';
-      ctx.font = '14px Arial';
-      ctx.fillText(emoji, -7, 5);
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(emoji, 0, 6);
+      ctx.textAlign = 'left';
       
       ctx.restore();
     });
