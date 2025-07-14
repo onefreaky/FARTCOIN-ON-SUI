@@ -109,13 +109,14 @@ const FartyBird = () => {
 
   // Generate coins
   const generateCoin = (x, y) => {
+    const types = ['fart', 'sui', 'diamond', 'rocket'];
     return {
       x,
       y,
       width: 25,
       height: 25,
       collected: false,
-      type: Math.random() > 0.3 ? 'fart' : 'sui',
+      type: types[Math.floor(Math.random() * types.length)],
       rotation: 0,
       sparkles: []
     };
@@ -123,7 +124,7 @@ const FartyBird = () => {
 
   // Generate power-ups
   const generatePowerUp = (x, y) => {
-    const types = ['bullish', 'moon', 'diamond'];
+    const types = ['bullish', 'moon', 'diamond', 'speed', 'invincibility'];
     return {
       x,
       y,
@@ -133,6 +134,21 @@ const FartyBird = () => {
       collected: false,
       rotation: 0,
       pulse: 0
+    };
+  };
+
+  // Generate candles
+  const generateCandle = (x, baseY) => {
+    const isGreen = Math.random() > 0.5;
+    const height = Math.random() * 40 + 20;
+    return {
+      x,
+      y: baseY - height,
+      width: 8,
+      height,
+      isGreen,
+      wickTop: Math.random() * 10,
+      wickBottom: Math.random() * 10
     };
   };
 
