@@ -342,23 +342,72 @@ const FartyBird = () => {
       }
     }
 
-    // Draw obstacles (price chart style)
+    // Draw obstacles (price chart style or candle style)
     obstacles.forEach(obstacle => {
-      ctx.fillStyle = '#0ea5e9';
-      ctx.fillRect(obstacle.x, 0, OBSTACLE_WIDTH, obstacle.topHeight);
-      ctx.fillRect(obstacle.x, obstacle.bottomY, OBSTACLE_WIDTH, obstacle.bottomHeight);
-      
-      // Draw chart pattern
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      obstacle.chartData.forEach((point, i) => {
-        const x = obstacle.x + (i * 3);
-        const y = obstacle.topHeight - (point * 40);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
+      if (obstacle.isCandle) {
+        // Draw candlestick obstacles
+        const color = obstacle.isGreen ? '#10b981' : '#ef4444';
+        const shadowColor = obstacle.isGreen ? '#059669' : '#dc2626';
+        
+        // Top candle
+        ctx.fillStyle = color;
+        ctx.fillRect(obstacle.x, 0, OBSTACLE_WIDTH, obstacle.topHeight);
+        
+        // Add candle body effect
+        ctx.fillStyle = shadowColor;
+        ctx.fillRect(obstacle.x + 5, 5, OBSTACLE_WIDTH - 10, obstacle.topHeight - 10);
+        
+        // Candle wicks
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(obstacle.x + OBSTACLE_WIDTH/2 - 2, 0, 4, obstacle.topHeight);
+        
+        // Bottom candle
+        ctx.fillStyle = color;
+        ctx.fillRect(obstacle.x, obstacle.bottomY, OBSTACLE_WIDTH, obstacle.bottomHeight);
+        
+        // Add candle body effect
+        ctx.fillStyle = shadowColor;
+        ctx.fillRect(obstacle.x + 5, obstacle.bottomY + 5, OBSTACLE_WIDTH - 10, obstacle.bottomHeight - 10);
+        
+        // Candle wicks
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(obstacle.x + OBSTACLE_WIDTH/2 - 2, obstacle.bottomY, 4, obstacle.bottomHeight);
+        
+        // Add price labels
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+        const priceTop = obstacle.isGreen ? '$1.25' : '$0.85';
+        const priceBottom = obstacle.isGreen ? '$1.15' : '$0.95';
+        ctx.fillText(priceTop, obstacle.x + OBSTACLE_WIDTH/2, obstacle.topHeight - 10);
+        ctx.fillText(priceBottom, obstacle.x + OBSTACLE_WIDTH/2, obstacle.bottomY + 20);
+        ctx.textAlign = 'left';
+      } else {
+        // Draw regular SUI obstacles
+        ctx.fillStyle = '#0ea5e9';
+        ctx.fillRect(obstacle.x, 0, OBSTACLE_WIDTH, obstacle.topHeight);
+        ctx.fillRect(obstacle.x, obstacle.bottomY, OBSTACLE_WIDTH, obstacle.bottomHeight);
+        
+        // Draw chart pattern
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        obstacle.chartData.forEach((point, i) => {
+          const x = obstacle.x + (i * 3);
+          const y = obstacle.topHeight - (point * 40);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        
+        // Add SUI logo
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('SUI', obstacle.x + OBSTACLE_WIDTH/2, obstacle.topHeight - 10);
+        ctx.fillText('SUI', obstacle.x + OBSTACLE_WIDTH/2, obstacle.bottomY + 20);
+        ctx.textAlign = 'left';
+      }
     });
 
     // Draw candles
