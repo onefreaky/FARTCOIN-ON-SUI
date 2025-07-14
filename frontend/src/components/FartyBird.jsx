@@ -595,23 +595,41 @@ const FartyBird = () => {
     
     ctx.restore();
 
-    // Draw score
+    // Draw enhanced UI
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 24px Arial';
+    ctx.font = 'bold 28px Arial';
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.strokeText(`Score: ${score}`, 20, 40);
     ctx.fillText(`Score: ${score}`, 20, 40);
 
-    // Draw active power-ups
-    let yOffset = 70;
+    // Draw active power-ups with better styling
+    let yOffset = 75;
     powerUps.forEach((powerUp) => {
       let displayName = powerUp.type.toUpperCase();
       if (powerUp.type === 'invincibility') displayName = 'INVINCIBLE';
       if (powerUp.type === 'speed') displayName = 'SPEED BOOST';
       
-      ctx.fillStyle = '#f59e0b';
-      ctx.font = '16px Arial';
-      ctx.fillText(`${displayName} (${Math.ceil(powerUp.duration / 60)}s)`, 20, yOffset);
-      yOffset += 25;
+      const timeLeft = Math.ceil(powerUp.duration / 60);
+      
+      // Background for power-up text
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(15, yOffset - 20, 200, 25);
+      
+      // Power-up text
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 16px Arial';
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 1;
+      ctx.strokeText(`${displayName} (${timeLeft}s)`, 20, yOffset);
+      ctx.fillText(`${displayName} (${timeLeft}s)`, 20, yOffset);
+      yOffset += 30;
     });
+
+    // Draw FPS counter (for debugging)
+    ctx.fillStyle = '#888888';
+    ctx.font = '12px Arial';
+    ctx.fillText(`FPS: ${Math.round(1000 / 16)}`, CANVAS_WIDTH - 80, 20);
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
   }, [gameState, score, powerUps, isInvincible, speedBoost]);
