@@ -410,17 +410,17 @@ const FartyBird = () => {
       }
     });
 
-    // Draw candles
-    candles.forEach(candle => {
-      ctx.fillStyle = candle.isGreen ? '#10b981' : '#ef4444';
-      
-      // Draw wick
-      ctx.fillRect(candle.x + candle.width/2 - 1, candle.y - candle.wickTop, 2, candle.wickTop);
-      ctx.fillRect(candle.x + candle.width/2 - 1, candle.y + candle.height, 2, candle.wickBottom);
-      
-      // Draw candle body
-      ctx.fillRect(candle.x, candle.y, candle.width, candle.height);
-    });
+    // Remove candles drawing section since they're now part of obstacles
+    // candles.forEach(candle => {
+    //   ctx.fillStyle = candle.isGreen ? '#10b981' : '#ef4444';
+    //   
+    //   // Draw wick
+    //   ctx.fillRect(candle.x + candle.width/2 - 1, candle.y - candle.wickTop, 2, candle.wickTop);
+    //   ctx.fillRect(candle.x + candle.width/2 - 1, candle.y + candle.height, 2, candle.wickBottom);
+    //   
+    //   // Draw candle body
+    //   ctx.fillRect(candle.x, candle.y, candle.width, candle.height);
+    // });
 
     // Draw coins
     coins.forEach(coin => {
